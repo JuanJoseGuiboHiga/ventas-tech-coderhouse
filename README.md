@@ -1,6 +1,6 @@
 # Ventas Tech — Base de Datos
 
-Script SQL para la **Pre-entrega 3** del curso de Data Analytics en Coderhouse.
+Script SQL para las **Pre-entregas** del curso de Data Analytics en Coderhouse.
 
 ## 📌 Descripción
 
