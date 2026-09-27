@@ -38,9 +38,9 @@ El repositorio incluye:
 
 ## 📊 Principales Hallazgos de Negocio
 
-- **Concentración de ventas:** El producto con `id_producto = 1` es el que generó más ingresos para la compañía en comparación con el resto del Top 5.
-- **Clientes que gastaron más:** Los clientes con `id = 1` y `5` son los clientes frecuentes que generaron mayores ganancias.
-- **Promedio mensual:** La facturación del mes 3 no estuvo ni por encima ni por debajo del promedio mensual, se mantuvo igual.
+- **Concentración de ventas:** Los productos con `id_producto = 1` e `id_producto = 3` representan el 76% de las ventas del mes 3.
+- **Clientes que gastaron más:** Los clientes con `id = 1` e `id = 5` son los clientes frecuentes que generaron el 73% de los ingresos brutos del mes 3.
+- **Promedio mensual:** La facturación del mes 3 no incrementó ni disminuyó con respecto al promedio mensual, manteniéndose igual a la media.
 
 ---
 
