@@ -47,9 +47,9 @@ SELECT
 FROM ventas_mensuales
 ORDER BY mes;
 
-/* ==========================================
-   BLOQUE DE CIERRE: HALLAZGOS DE NEGOCIO
-   ========================================== */
+-- ==========================================
+-- BLOQUE DE CIERRE: HALLAZGOS DE NEGOCIO
+-- ==========================================
 -- 1. Concentración de ventas: Los productos con id 1 y 3 representan el 76% de las ventas del mes 3.
 -- 2. Clientes que gastaron más: Los clientes con id 1 y 5 son los clientes frecuentes que generaron el 73% de los ingresos brutos del mes 3.
--- 3. Promedio mensual: La facturación del mes 3 no incrementó ni disminuyó con respecto al promedio mensual.
+-- 3. Promedio mensual: La facturación del mes 3 no incrementó ni disminuyó con respecto al promedio mensual.Los resultados del mes 3 sirven como punto de partida o línea base (baseline). Se recomienda integrar los datos de los meses siguientes para monitorear variaciones y detectar patrones temporales de demanda.
