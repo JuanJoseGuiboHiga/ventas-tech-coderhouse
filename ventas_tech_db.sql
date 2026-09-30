@@ -97,7 +97,6 @@ CREATE TABLE ventas (
 	id_producto INT NOT NULL,
 	id_canal INT NOT NULL,
 	cantidad INT NOT NULL,
-	precio_unitario DECIMAL(10,2) NOT NULL,
 	fecha_venta DATE NOT NULL,
 	
 	CONSTRAINT fk_clientes
@@ -253,19 +252,19 @@ INSERT INTO metas (id_meta, id_region, nombre_meta, monto_meta, estado_meta, fec
 
 -- 4. Transacciones (Ventas)
 
-INSERT INTO ventas (id_venta, id_cliente, id_producto, id_canal, cantidad, precio_unitario, fecha_venta) VALUES
-  ( 1, 1, 1, 1, 2, 1200.00, '2024-03-05'),
-  ( 2, 2, 2, 2, 5,   28.00, '2024-03-06'),
-  ( 3, 3, 3, 1, 1,  450.00, '2024-03-07'),
-  ( 4, 1, 4, 3, 2,  120.00, '2024-03-08'),
-  ( 5, 4, 5, 1, 3,  130.00, '2024-03-10'),
-  ( 6, 2, 6, 2, 4,   95.00, '2024-03-11'),
-  ( 7, 5, 1, 1, 1, 1200.00, '2024-03-12'),
-  ( 8, 3, 2, 3, 8,   28.00, '2024-03-13'),
-  ( 9, 4, 4, 2, 1,  120.00, '2024-03-14'),
-  (10, 5, 3, 1, 2,  450.00, '2024-03-15'),
-  (11, 6, 1, 3, 1, 1200.00, '2024-03-16'),
-  (12, 6, 5, 1, 2,  130.00, '2024-03-17');
+INSERT INTO ventas (id_venta, id_cliente, id_producto, id_canal, cantidad, fecha_venta) VALUES
+  ( 1, 1, 1, 1, 2, '2024-03-05'),
+  ( 2, 2, 2, 2, 5, '2024-03-06'),
+  ( 3, 3, 3, 1, 1, '2024-03-07'),
+  ( 4, 1, 4, 3, 2, '2024-03-08'),
+  ( 5, 4, 5, 1, 3, '2024-03-10'),
+  ( 6, 2, 6, 2, 4, '2024-03-11'),
+  ( 7, 5, 1, 1, 1, '2024-03-12'),
+  ( 8, 3, 2, 3, 8, '2024-03-13'),
+  ( 9, 4, 4, 2, 1, '2024-03-14'),
+  (10, 5, 3, 1, 2, '2024-03-15'),
+  (11, 6, 1, 3, 1, '2024-03-16'),
+  (12, 6, 5, 1, 2, '2024-03-17');
 
 -- === SECCIÓN 4: VALIDACIÓN ===
 
