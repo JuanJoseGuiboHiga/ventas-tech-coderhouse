@@ -196,7 +196,11 @@ INSERT INTO clientes (id_cliente, nombre, email, id_ciudad, id_segmento, fecha_r
   (3, 'Ana Gómez',     'ana@mail.com',     3, 3, '2024-02-01'),
   (4, 'Pedro Sanz',    'pedro@mail.com',   4, 2, '2024-02-15'),
   (5, 'Laura Torres',  'laura@mail.com',   5, 1, '2024-03-01'),
-  (6, 'Martín Castro', 'martin@mail.com',  6, 3, '2024-03-04');
+  (6, 'Martín Castro', 'martin@mail.com',  6, 3, '2024-03-04'),
+  (7, 'Esteban Morales', 'esteban@mail.com', 1, 1, '2024-03-20'),
+  (8, 'Valeria Rivas',   'valeria@mail.com', 2, 2, '2024-03-22'),
+  (9, 'Gonzalo Méndez',  'gonzalo@mail.com', 4, 3, '2024-03-25'),
+  (10, 'Camila Herrera',  'camila@mail.com',  6, 2, '2024-03-28');
 
 INSERT INTO productos (id_producto, nombre_producto, id_categoria, id_subcategoria, precio, stock, activo) VALUES
   (1, 'Laptop Pro 15',      1, 1, 1200.00, 15, TRUE),
@@ -204,7 +208,11 @@ INSERT INTO productos (id_producto, nombre_producto, id_categoria, id_subcategor
   (3, 'Monitor 4K 27',      1, 2,  450.00, 12, TRUE),
   (4, 'Auriculares BT Pro', 3, 4,  120.00, 35, TRUE),
   (5, 'SSD Externo 1TB',    4, 5,  130.00, 18, TRUE),
-  (6, 'Teclado Mecánico',   2, 3,   95.00, 40, TRUE);
+  (6, 'Teclado Mecánico',   2, 3,   95.00, 40, TRUE),
+  (7,  'Webcam Full HD 1080p',  2, 3,  65.00, 25, TRUE),
+  (8,  'Micrófono Condensador', 3, 4, 110.00, 14, TRUE),
+  (9,  'Pad Mouse XXL',         2, 3,  20.00, 50, TRUE),
+  (10, 'Hub USB-C 7 en 1',      2, 3,  45.00, 30, TRUE);
 
 -- 3. Dimensiones Territoriales y Metas
 INSERT INTO territorios (id_territorio, id_region, id_pais, id_zona, nombre_territorio) VALUES
@@ -253,3 +261,4 @@ SELECT * FROM metas;           -- esperado: 4 filas
 SELECT * FROM clientes;        -- esperado: 6 filas
 SELECT * FROM productos;       -- esperado: 6 filas
 SELECT * FROM ventas;          -- esperado: 12 filas
+
