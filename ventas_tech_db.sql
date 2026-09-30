@@ -1,54 +1,46 @@
--- Motor utilizado: PostgreSQL 18
+-- Motor utilizado: PostgreSQL
 -- Base de datos: Ventas_Tech_DB
 
 -- === SECCIÓN 1: DROP TABLES ===
-
--- Eliminando las tablas si existen
-
 DROP TABLE IF EXISTS ventas;
-DROP TABLE IF EXISTS promociones;
-DROP TABLE IF EXISTS productos;
-DROP TABLE IF EXISTS clientes;
-DROP TABLE IF EXISTS territorios;
 DROP TABLE IF EXISTS metas;
-DROP TABLE IF EXISTS categorias;
-DROP TABLE IF EXISTS subcategorias;
-DROP TABLE IF EXISTS ciudades;
-DROP TABLE IF EXISTS segmentos;
+DROP TABLE IF EXISTS territorios;
 DROP TABLE IF EXISTS regiones;
-DROP TABLE IF EXISTS paises;
 DROP TABLE IF EXISTS zonas;
-DROP TABLE IF EXISTS canales;
+DROP TABLE IF EXISTS paises;
+DROP TABLE IF EXISTS productos;
+DROP TABLE IF EXISTS subcategorias;
+DROP TABLE IF EXISTS categorias;
+DROP TABLE IF EXISTS clientes;
+DROP TABLE IF EXISTS segmentos;
+DROP TABLE IF EXISTS ciudades;
+
 
 -- === SECCIÓN 2: CREATE TABLES ===
 
--- Creamos la tabla categorias
+-- 1. Dimensiones de Clientes y Productos
 CREATE TABLE categorias (
 	id_categoria INT PRIMARY KEY,
 	nombre_categoria VARCHAR(50) NOT NULL,
 	descripcion VARCHAR(200)
 );
 
--- Creamos la tabla subcategorias
 CREATE TABLE subcategorias (
 	id_subcategoria INT PRIMARY KEY,
 	nombre_subcategoria VARCHAR(50) NOT NULL,
 	descripcion VARCHAR(200)
 );
 
--- Creamos la tabla ciudades
 CREATE TABLE ciudades (
 	id_ciudad INT PRIMARY KEY,
 	nombre VARCHAR(50) NOT NULL
 );
 
--- Creamos la tabla segmentos
 CREATE TABLE segmentos (
 	id_segmento INT PRIMARY KEY,
 	nombre VARCHAR(50) NOT NULL
 );
 
--- Creamos la tabla clientes
 CREATE TABLE clientes (
 	id_cliente INT PRIMARY KEY,
 	nombre VARCHAR(100) NOT NULL,
@@ -65,7 +57,6 @@ CREATE TABLE clientes (
 		REFERENCES segmentos(id_segmento)
 );
 
--- Creamos la tabla productos
 CREATE TABLE productos (
 	id_producto INT PRIMARY KEY,
 	nombre_producto VARCHAR(100) NOT NULL,
@@ -83,52 +74,22 @@ CREATE TABLE productos (
 		REFERENCES subcategorias(id_subcategoria)
 );
 
--- Creamos la tabla canales
-CREATE TABLE canales (
-	id_canal INT PRIMARY KEY,
-	nombre_canal VARCHAR(50) NOT NULL,
-	descripcion VARCHAR(200)
-);
-
--- Creamos la tabla ventas
-CREATE TABLE ventas (
-	id_venta INT PRIMARY KEY,
-	id_cliente INT NOT NULL,
-	id_producto INT NOT NULL,
-	id_canal INT NOT NULL,
-	cantidad INT NOT NULL,
-	fecha_venta DATE NOT NULL,
-	
-	CONSTRAINT fk_clientes
-		FOREIGN KEY (id_cliente)
-		REFERENCES clientes(id_cliente),
-	CONSTRAINT fk_productos
-		FOREIGN KEY (id_producto)
-		REFERENCES productos(id_producto),
-	CONSTRAINT fk_canales
-		FOREIGN KEY (id_canal)
-		REFERENCES canales(id_canal)
-);
-
--- Creamos la tabla paises
+-- 2. Dimensiones Geográficas y Territoriales (deben crearse ANTES de ventas)
 CREATE TABLE paises (
 	id_pais INT PRIMARY KEY,
 	nombre_pais VARCHAR(50) NOT NULL
 );
 
--- Creamos la tabla zonas
 CREATE TABLE zonas (
 	id_zona INT PRIMARY KEY,
 	nombre_zona VARCHAR(50) NOT NULL
 );
 
--- Creamos la tabla regiones
 CREATE TABLE regiones (
 	id_region INT PRIMARY KEY,
 	nombre_region VARCHAR(50) NOT NULL
 );
 
--- Creamos la tabla territorios
 CREATE TABLE territorios (
 	id_territorio INT PRIMARY KEY,
 	id_region INT NOT NULL,
@@ -147,7 +108,6 @@ CREATE TABLE territorios (
 		REFERENCES zonas(id_zona)
 );
 
--- Creamos la tabla metas
 CREATE TABLE metas (
 	id_meta INT PRIMARY KEY,
 	id_region INT NOT NULL,
@@ -157,16 +117,35 @@ CREATE TABLE metas (
 	fecha_inicio DATE NOT NULL,
 	fecha_fin DATE NOT NULL,
 
-	CONSTRAINT fk_regiones
+	CONSTRAINT fk_metas_regiones
 		FOREIGN KEY (id_region)
 		REFERENCES regiones(id_region)
+);
+
+-- 3. Tabla de Hechos (Ventas)
+CREATE TABLE ventas (
+	id_venta INT PRIMARY KEY,
+	id_cliente INT NOT NULL,
+	id_producto INT NOT NULL,
+	id_territorio INT NOT NULL,
+	cantidad INT NOT NULL,
+	fecha_venta DATE NOT NULL,
+	
+	CONSTRAINT fk_clientes
+		FOREIGN KEY (id_cliente)
+		REFERENCES clientes(id_cliente),
+	CONSTRAINT fk_productos
+		FOREIGN KEY (id_producto)
+		REFERENCES productos(id_producto),
+	CONSTRAINT fk_territorio
+		FOREIGN KEY (id_territorio)
+		REFERENCES territorios(id_territorio)
 );
 
 
 -- === SECCIÓN 3: INSERT DATA ===
 
--- 1. Dimensiones geográficas y de clasificación base
-
+-- 1. Dimensiones geográficas y de clasificación
 INSERT INTO categorias (id_categoria, nombre_categoria, descripcion) VALUES
   (1, 'Computación',    'Laptops, PCs y monitores'),
   (2, 'Accesorios',     'Periféricos y complementos'),
@@ -193,11 +172,6 @@ INSERT INTO segmentos (id_segmento, nombre) VALUES
   (2, 'Consumo Final'),
   (3, 'Pymes');
 
-INSERT INTO canales (id_canal, nombre_canal, descripcion) VALUES
-  (1, 'E-Commerce',    'Tienda online oficial'),
-  (2, 'Tienda Física', 'Sucursal presencial y retiro'),
-  (3, 'B2B Mayorista', 'Venta directa a empresas');
-
 INSERT INTO paises (id_pais, nombre_pais) VALUES
   (1, 'Argentina'),
   (2, 'Chile'),
@@ -215,9 +189,7 @@ INSERT INTO regiones (id_region, nombre_region) VALUES
   (3, 'Región Andina'),
   (4, 'Región Patagónica');
 
-
 -- 2. Entidades principales (Clientes y Productos)
-
 INSERT INTO clientes (id_cliente, nombre, email, id_ciudad, id_segmento, fecha_registro) VALUES
   (1, 'María López',   'maria@mail.com',   1, 1, '2024-01-05'),
   (2, 'Carlos Ruiz',   'carlos@mail.com',  2, 2, '2024-01-10'),
@@ -234,9 +206,7 @@ INSERT INTO productos (id_producto, nombre_producto, id_categoria, id_subcategor
   (5, 'SSD Externo 1TB',    4, 5,  130.00, 18, TRUE),
   (6, 'Teclado Mecánico',   2, 3,   95.00, 40, TRUE);
 
-
 -- 3. Dimensiones Territoriales y Metas
-
 INSERT INTO territorios (id_territorio, id_region, id_pais, id_zona, nombre_territorio) VALUES
   (1, 1, 1, 1, 'Territorio Buenos Aires - Pampeana'),
   (2, 2, 1, 2, 'Territorio NOA - Tucumán'),
@@ -249,22 +219,20 @@ INSERT INTO metas (id_meta, id_region, nombre_meta, monto_meta, estado_meta, fec
   (3, 3, 'Meta Q1-Q2 Cuyo',      25000.00, TRUE, '2024-01-01', '2024-06-30'),
   (4, 4, 'Meta Q1-Q2 Patagonia', 35000.00, TRUE, '2024-01-01', '2024-06-30');
 
-
--- 4. Transacciones (Ventas)
-
-INSERT INTO ventas (id_venta, id_cliente, id_producto, id_canal, cantidad, fecha_venta) VALUES
+-- 4. Transacciones (Ventas ajustadas a 6 columnas: id_venta, id_cliente, id_producto, id_territorio, cantidad, fecha_venta)
+INSERT INTO ventas (id_venta, id_cliente, id_producto, id_territorio, cantidad, fecha_venta) VALUES
   ( 1, 1, 1, 1, 2, '2024-03-05'),
-  ( 2, 2, 2, 2, 5, '2024-03-06'),
+  ( 2, 2, 2, 1, 5, '2024-03-06'),
   ( 3, 3, 3, 1, 1, '2024-03-07'),
-  ( 4, 1, 4, 3, 2, '2024-03-08'),
-  ( 5, 4, 5, 1, 3, '2024-03-10'),
-  ( 6, 2, 6, 2, 4, '2024-03-11'),
-  ( 7, 5, 1, 1, 1, '2024-03-12'),
-  ( 8, 3, 2, 3, 8, '2024-03-13'),
-  ( 9, 4, 4, 2, 1, '2024-03-14'),
-  (10, 5, 3, 1, 2, '2024-03-15'),
-  (11, 6, 1, 3, 1, '2024-03-16'),
-  (12, 6, 5, 1, 2, '2024-03-17');
+  ( 4, 1, 4, 1, 2, '2024-03-08'),
+  ( 5, 4, 5, 3, 3, '2024-03-10'),
+  ( 6, 2, 6, 1, 4, '2024-03-11'),
+  ( 7, 5, 1, 2, 1, '2024-03-12'),
+  ( 8, 3, 2, 1, 8, '2024-03-13'),
+  ( 9, 4, 4, 3, 1, '2024-03-14'),
+  (10, 5, 3, 2, 2, '2024-03-15'),
+  (11, 6, 1, 4, 1, '2024-03-16'),
+  (12, 6, 5, 4, 2, '2024-03-17');
 
 -- === SECCIÓN 4: VALIDACIÓN ===
 
@@ -273,7 +241,6 @@ SELECT * FROM categorias;      -- esperado: 4 filas
 SELECT * FROM subcategorias;   -- esperado: 5 filas
 SELECT * FROM ciudades;        -- esperado: 6 filas
 SELECT * FROM segmentos;       -- esperado: 3 filas
-SELECT * FROM canales;         -- esperado: 3 filas
 
 -- 2. Tablas geográficas y de metas
 SELECT * FROM paises;          -- esperado: 3 filas
