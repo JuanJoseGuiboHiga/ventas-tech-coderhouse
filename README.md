@@ -1,16 +1,17 @@
-# Ventas Tech — Base de Datos, Pipeline ETL y Análisis de Datos
+# Ventas Tech — Base de Datos, Pipeline ETL, Modelado Relacional y Medidas DAX
 
-Repositorio del proyecto del curso de Data Analytics en Coderhouse. Contiene la creación y evolución del modelo relacional en SQL, junto con el pipeline de extracción, transformación y carga (ETL) desarrollado en Power Query (lenguaje M) para la integración analítica en Power BI sobre el dataset corporativo.
+Repositorio del proyecto del curso de Data Analytics en Coderhouse. Contiene el ciclo analítico integral: creación y evolución del modelo relacional en SQL, pipeline de extracción, transformación y carga (ETL) en Power Query (lenguaje M), y el modelado dimensional con relaciones activas e inteligencia de tiempo mediante DAX en Power BI.
 
 ---
 
 ## 📌 Descripción
 
 El repositorio incluye:
-1. `ventas_tech_db.sql`: Script DDL/DML para la creación de tablas, definición de claves foráneas y carga de datos iniciales/actualizados en PostgreSQL.
-2. `m4_consultas_negocio.sql`: Script de consultas analíticas para responder a preguntas clave de negocio, segmentación y métricas de desempeño (agrupaciones y agregaciones).
-3. `m5_consultas_join_union.sql`: Script de consultas avanzadas utilizando combinaciones relacionales (`INNER JOIN`, `LEFT JOIN`), detección de registros sin movimientos y consolidación multicanal (`UNION ALL` + `GROUP BY`).
-4. `m6_pipeline_etl_powerquery.m`: Pipeline ETL documentado en lenguaje M para la extracción, limpieza, imputación de calidad y modelado dimensional (tablas de dimensiones y hechos) desde archivos fuente.
+1. `ventas_tech_db.sql`: Script DDL/DML para la creación de tablas, definición de claves foráneas y carga de datos en PostgreSQL.
+2. `m4_consultas_negocio.sql`: Script de consultas analíticas para responder a preguntas clave de negocio y métricas de desempeño.
+3. `m5_consultas_join_union.sql`: Consultas relacionales avanzadas (`INNER JOIN`, `LEFT JOIN`, detección de registros huérfanos y consolidación `UNION ALL`).
+4. `m6_pipeline_etl_powerquery.m`: Pipeline ETL documentado en lenguaje M para extracción, limpieza, imputación de calidad y modelado dimensional.
+5. `GuiboHiga_JuanJose_Checkpoint2.pbix`: Archivo de Power BI Desktop con el modelo estrella/copo de nieve, tabla calendario `Dim_Fechas`, tabla `_Medidas` y validación temporal en Matriz.
 
 ---
 
@@ -18,66 +19,93 @@ El repositorio incluye:
 
 - **Bases de Datos & SQL:** PostgreSQL 18 (DDL, DML, DQL).
 - **ETL & Modelado:** Power BI Desktop, Power Query Engine, Lenguaje M.
+- **Cálculo Analítico:** DAX (Data Analysis Expressions), Time Intelligence, Contextos de Fila y Filtro.
 - **Herramientas de edición y versionado:** Notepad++, Git, GitHub.
-- **Funciones y cláusulas SQL:** `INNER JOIN`, `LEFT JOIN`, `IS NULL`, `UNION ALL`, `GROUP BY`, `SUM()`, `COUNT()`, `AVG()`, `EXTRACT()`, `HAVING`, `CASE WHEN`, CTEs (`WITH`), `ORDER BY`, `LIMIT`.
-- **Operaciones y funciones en Lenguaje M:** `Excel.Workbook`, `Table.PromoteHeaders`, `Table.TransformColumnTypes`, `Table.Distinct` (garantía de unicidad en PK), `Table.SelectRows` (eliminación de registros vacíos), `Table.ReplaceValue` (imputaciones dimensionales), `Table.AddColumn` (reglas de negocio y cálculo de markup contextual), `Table.NestedJoin` (`JoinKind.LeftOuter`), `Table.ExpandTableColumn`.
+- **Funciones y cláusulas SQL:** `INNER JOIN`, `LEFT JOIN`, `IS NULL`, `UNION ALL`, `GROUP BY`, `SUM()`, `COUNT()`, `AVG()`, `EXTRACT()`, `HAVING`, `CASE WHEN`, CTEs (`WITH`).
+- **Operaciones en M:** `Table.Distinct`, `Table.ReplaceValue`, `Table.AddColumn`, `Table.NestedJoin`, `Table.TransformColumnTypes`.
+- **Funciones DAX:** `SUM`, `CALCULATE`, `TOTALYTD`, `SAMEPERIODLASTYEAR`, `VAR` / `RETURN`, `DIVIDE`, `GENERATE`, `CALENDAR`.
 
 ---
 
-## 🗂️ Estructura de los Scripts y Pipelines
+## 🗂️ Estructura de los Scripts y Modelos
 
 ### 1. Modelo de Datos SQL (`ventas_tech_db.sql`)
-* **DROP TABLES:** Limpieza de tablas previas respetando el orden inverso de dependencias.
-* **CREATE TABLES:** Definición de tablas de dimensiones y hechos: `categorias`, `subcategorias`, `segmentos`, `ciudades`, `clientes`, `productos`, `zonas`, `regiones`, `territorios` y `ventas`.
-* **INSERT DATA:** Poblado de datos de prueba con transacciones e inserción de clientes y productos sin movimientos para análisis de cobertura.
-* **VALIDACIÓN:** Verificación de integridad referencial.
+* Creación de tablas de dimensiones y hechos con claves foráneas.
+* Poblado de transacciones y registros de control sin movimientos.
 
 ### 2. Consultas de Negocio — Módulo 4 (`m4_consultas_negocio.sql`)
-* **Consulta 1 — Resumen Ejecutivo Mensual:** Facturación total, cantidad de pedidos y ticket promedio por mes.
-* **Consulta 2 — Ranking de Productos (Top 5):** Productos con mayores ingresos y su volumen físico vendido.
-* **Consulta 3 — Clientes Recurrentes:** Clientes con más de un pedido y su total gastado.
-* **Consulta 4 — Rendimiento Mensual vs. Promedio:** Clasificación de cada mes según si su facturación estuvo *por encima*, *por debajo* o *igual* al promedio mensual general.
+* Facturación total, ticket promedio, Top 5 de productos y clientes recurrentes.
 
 ### 3. Consultas con Join y Union — Módulo 5 (`m5_consultas_join_union.sql`)
-* **Consulta 1 — Vista Base Dimensional (INNER JOIN):** Integración completa de la transacción con dimensiones de cliente, producto y localización geográfica.
-* **Consulta 2 — Clientes sin Ventas (LEFT JOIN):** Identificación de clientes registrados que aún no han realizado compras (`WHERE v.id_venta IS NULL`).
-* **Consulta 3 — Productos sin Rotación (LEFT JOIN):** Detección de ítems del catálogo que no registran ventas.
-* **Consulta 4 — Consolidación Multicanal (UNION ALL + GROUP BY):** Unificación de ventas por zona/canal ('Online' en Sur y 'Presencial' en Centro) y agregación de totales por canal.
+* Integración dimensional, detección de clientes/productos sin movimientos y unificación multicanal.
 
-### 4. Pipeline ETL y Calidad de Datos en Power Query — Módulo 6 (`m6_pipeline_etl_powerquery.m`)
-* **Dim_Clientes:** Extracción de hoja origen, control de unicidad en Primary Key (`id_cliente`) para garantizar relaciones 1 a varios con hechos, descarte de registros en blanco, imputación de nulos en atributos categóricos (`ciudad`, `email`) para evitar blancos en segmentadores, y tipado de `fecha_registro` a formato `date`.
-* **Dim_Productos:** Control de clave primaria (`id_producto`), imputación de categoría faltante ("Sin Categoría") e imputación contextual de precios nulos mediante el factor de recargo (markup medio de catálogo ~1.93 sobre el costo), asegurando tipos numéricos para medidas DAX de ingresos y margen.
-* **Dim_Categorias:** Extracción, tipado entero de la clave y atributos descriptivos de texto, con control de filas vacías para evitar categorías nulas.
-* **Fact_Ventas:** Tipado estricto de claves foráneas (`id_cliente`, `id_producto`), métricas cuantitativas y fecha transaccional; enriquecimiento mediante `Left Outer Join` con `Dim_Productos` para desnormalización controlada de atributos y estructuración dimensional de hechos.
+### 4. Pipeline ETL en Power Query — Módulo 6 (`m6_pipeline_etl_powerquery.m`)
+* Limpieza, tipado estricto, imputación de nulos por markup medio de catálogo y desduplicación de claves primarias.
 
----
-
-## 📊 Principales Hallazgos y Decisiones de Modelado
-
-- **Concentración de ventas:** Los productos con `id_producto = 1` e `id_producto = 3` representan el 76% de las ventas del mes 3.
-- **Clientes que gastaron más:** Los clientes con `id = 1` e `id = 5` son los clientes frecuentes que generaron el 73% de los ingresos brutos del mes 3.
-- **Promedio mensual:** La facturación del mes 3 se mantuvo alineada con la media mensual general.
-- **Oportunidades de activación comercial:** La identificación de clientes y productos sin transacciones permitió focalizar campañas de retargeting y rotación de stock.
-- **Integridad y robustez en ETL:** Las claves primarias fueron desduplicadas en Power Query para evitar relaciones de muchos a muchos ambiguas en el modelo de Power BI. Se preservó el catálogo aplicando reglas de negocio (imputación por markup) en lugar de descartar registros transaccionales valiosos.
+### 5. Modelado y Medidas Core en DAX — Módulo 8 (`GuiboHiga_JuanJose_Checkpoint2.pbix`)
+* **Modelo Relacional:** Esquema dimensional con relaciones activas `1:N` y dirección de filtro simple hacia `Fact_Ventas`.
+* **Dim_Fechas:** Tabla calendario calculada para soporte de análisis temporal.
+* **Tabla `_Medidas`:** Centralización de métricas core del negocio:
+  * **Total Ventas (Base):**
+    ```dax
+    Total Ventas = SUM(Fact_Ventas[total_venta])
+    ```
+  * **Ventas Online (Filtro con CALCULATE):**
+    ```dax
+    Ventas Online = 
+    CALCULATE(
+        [Total Ventas],
+        Fact_Ventas[canal] = "Online"
+    )
+    ```
+  * **Ventas YTD (Acumulado temporal):**
+    ```dax
+    Ventas YTD = 
+    TOTALYTD(
+        [Total Ventas],
+        Dim_Fechas[Date]
+    )
+    ```
+  * **Ventas LY (Año anterior):**
+    ```dax
+    Ventas LY = 
+    CALCULATE(
+        [Total Ventas],
+        SAMEPERIODLASTYEAR(Dim_Fechas[Date])
+    )
+    ```
+  * **% Crecimiento Anual (Optimizado con Variables):**
+    ```dax
+    % Crecimiento Anual = 
+    VAR VentasActual = [Total Ventas]
+    VAR VentasAnterior = [Ventas LY]
+    RETURN
+        DIVIDE(
+            VentasActual - VentasAnterior,
+            VentasAnterior,
+            0
+        )
+    ```
 
 ---
 
 ## 🗃️ Esquema Dimensional del Proyecto
 
 ### Tablas de Dimensiones
-- **Dim_Categorias:** `id_categoria` (PK), `nombre_categoria`, `descripcion`
-- **Dim_Clientes:** `id_cliente` (PK), `nombre_cliente`, `email`, `ciudad`, `pais`, `segmento`, `fecha_registro`
-- **Dim_Productos:** `id_producto` (PK), `nombre_producto`, `categoria`, `subcategoria`, `precio`, `costo`, `stock`, `activo`
+- **`Dim_Categorias`:** `id_categoria` (PK), `nombre_categoria`, `descripcion`
+- **`Dim_Clientes`:** `id_cliente` (PK), `nombre_cliente`, `email`, `ciudad`, `pais`, `segmento`, `fecha_registro`
+- **`Dim_Productos`:** `id_producto` (PK), `nombre_producto`, `categoria`, `subcategoria`, `precio`, `costo`, `stock`, `activo`
+- **`Dim_Fechas`:** `Date` (PK), `Año`, `Mes`, `Mes Nombre`, `Trimestre`, `Día`
 
 ### Tabla de Hechos
-- **Fact_Ventas:** `id_venta` (PK), `fecha_venta`, `id_cliente` (FK), `id_producto` (FK), `nombre_producto`, `categoria_producto`, `cantidad`, `precio_unitario`, `descuento`, `total_venta`, `canal`
+- **`Fact_Ventas`:** `id_venta` (PK), `fecha_venta` (FK), `id_cliente` (FK), `id_producto` (FK), `nombre_producto`, `categoria_producto`, `cantidad`, `precio_unitario`, `descuento`, `total_venta`, `canal`
 
 ---
 
 ## ▶️ Cómo Ejecutarlo
 
 ### 1. Entorno SQL (PostgreSQL)
-1. Crear la base de datos en PostgreSQL:
+1. Crear la base de datos:
    ```sql
    CREATE DATABASE "Ventas_Tech_DB";
 2. Ejecutar ventas_tech_db.sql para crear la estructura completa y cargar los datos actualizados.
@@ -86,8 +114,9 @@ El repositorio incluye:
  - m5_consultas_join_union.sql para análisis dimensional, detección de huérfanos y consolidación con UNION ALL.
 
 ### 2. Entorno Power BI / Power Query
-1. Abrir Power BI Desktop, abrir archivo Pipeline_ETL_GuiboHiga_JuanJose.pbix y acceder al Editor de Power Query (Transformar datos).
-2. Para cada consulta (Dim_Clientes, Dim_Productos, Dim_Categorias, Fact_Ventas), abrir el Editor Avanzado.
+1. Abrir GuiboHiga_JuanJose_Checkpoint2.pbix en Power BI Desktop.
+2. En la vista Modelo, verificar el esquema de relaciones 1:N.
+3. En la vista Informe, interactuar con la Matriz para validar los cálculos de Total Ventas, Ventas YTD, Ventas LY y % Crecimiento Anual.
 
 👤 Autor
 Juan José Guibo Higa
